@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إرسال دعوة العيد</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: "Cairo", sans-serif;
+            text-align: center;
+            background-color: #FF9900;
+            color: #30353A;
+        }
+        .container {
+            margin-top: 50px;
+            padding: 20px;
+            background-color: #FFFFFF;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        input, select, button {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: calc(100% - 22px);
+            font-family: 'Cairo', sans-serif;
+        }
+        button {
+            background-color: #28A745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .youtube-button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #FF0000;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+        }
+        .youtube-button:hover {
+            background-color: #CC0000;
+        }
+        canvas {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .invitation-info {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .copy-button {
+            margin-top: 10px;
+            padding: 8px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+        }
+        .copy-button:hover {
+            background-color: #0056B3;
+        }
+    </style>
+</head>
+<body onload="playGreeting()">
+    <div class="container" id="formContainer">
+        <h1>أرسل تهنئه العيد</h1>
+        <form id="invitationForm" onsubmit="submitForm(event)">
+            <div>
+                <label for="senderName">اسمك:</label> 
+                <p>ابدأ باسم ثنائي للحصول على أفضل نتائج</p>
+                <input type="text" id="senderName" name="senderName" required>
+            </div>
+            <div>
+                <label for="recipientName">اسم حبيبك:</label>
+                <p>ابدأ باسم ثنائي للحصول على أفضل نتائج</p>
+                <input type="text" id="recipientName" name="recipientName" required>
+            </div>
+            <div>
+                <label for="soundType">اختر صوت التهنئه:</label>
+                <select id="soundType" name="soundType">
+                    <option value="arabic_takbeer">تكبيرات العيد</option>
+                    <option value="arabic_talbiyah">لبيك اللهم لبيك</option>
+                </select>
+            </div>
+            <button type="submit">إنشاء التهنئه</button>
+        </form>
+    </div>
+
+    <div class="container" id="invitationContainer" style="display: none;">
+        <h1>تهنئة عيد الأضحى</h1>
+        <div class="invitation-info">
+            <p id="invitationText"></p>
+            <canvas id="invitationCanvas"></canvas>
+            <p id="invitationMessage"></p>
+            <button class="copy-button" onclick="copyInvitationLink()">نسخ رابط الدعوة</button>
+            <button class="new-invitation-button" onclick="createNewInvitation()">صناعة دعوة جديدة</button>
+            <button class="youtube-button" onclick="window.location.href='https://www.youtube.com/yourchannel'">صفحتنا على اليوتيوب</button>
+        </div>
+        <audio id="invitationAudio" autoplay>
+            <source id="audioSource" src="https://i.top4top.io/m_3033hl8050.m4a" type="audio/mpeg">
+        </audio>
+    </div>
+
+    <script>
+        function submitForm(event) {
+            event.preventDefault();
+            const senderName = document.getElementById('senderName').value;
+            const recipientName = document.getElementById('recipientName').value;
+            const soundType = document.getElementById('soundType').value;
+
+            document.getElementById('formContainer').style.display = 'none';
+            document.getElementById('invitationContainer').style.display = 'block';
+
+            const invitationText = `تهنئة بحلول عيد الأضحى المبارك من ${senderName} إلى ${recipientName}`;
+            document.getElementById('invitationText').textContent = invitationText;
+
+            const invitationMessage = `من ${senderName} إلى ${recipientName}، أغلى الناس على قلبي. كل عام وأنت بخير! عيد أضحى سعيد، أعاده الله علينا وعليك باليمن والبركات.`;
+            document.getElementById('invitationMessage').textContent = invitationMessage;
+
+            const audioSource = document.getElementById('audioSource');
+            if (soundType === 'arabic_takbeer') {
+                audioSource.src = 'https://i.top4top.io/m_3033hl8050.m4a';
+            } else if (soundType === 'arabic_talbiyah') {
+                audioSource.src = 'path/to/arabic_talbiyah.mp3';
+            }
+
+            const canvas = document.getElementById('invitationCanvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            img.src = 'https://mthqaf.com/eid/img/666a39d477e0e.png';
+
+            img.onload = function() {
+                const aspectRatio = img.width / img.height;
+                const maxWidth = 300;
+                canvas.width = maxWidth;
+                canvas.height = maxWidth / aspectRatio;
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                // تعيين خصائص النص
+                ctx.font = 'bold 16px Cairo'; // حجم الخط ونوعه
+                ctx.fillStyle = '#0D5E87'; // لون النص
+                ctx.textAlign = 'center'; // محاذاة النص في المنتصف
+                ctx.textBaseline = 'middle'; // تحديد خط الأساس للنص
+
+                // كتابة النص في منتصف الصورة
+                const x = canvas.width / 2;
+                ctx.fillText(senderName, x, canvas.height * 0.8); // النص المرسل
+                ctx.fillText(recipientName, x, canvas.height * 0.6); // النص المرسل إليه
+
+                // إضافة حدود للنص لتحسين الوضوح
+                ctx.lineWidth = 0.5; // عرض الخط
+                ctx.strokeStyle = '#001BFF'; // لون الحدود
+                ctx.strokeText(senderName, x, canvas.height * 10.1000); // حدود النص المرسل
+                ctx.strokeText(recipientName, x, canvas.height * 10.100); // حدود النص المرسل إليه
+            };
+
+            document.getElementById('invitationAudio').load();
+        }
+
+        function copyInvitationLink() {
+            const invitationLink = window.location.href;
+            navigator.clipboard.writeText(invitationLink).then(function() {
+                alert('تم نسخ رابط الدعوة بنجاح!');
+            }, function(err) {
+                console.error('فشل في نسخ رابط الدعوة: ', err);
+            });
+        }
+
+        function createNewInvitation() {
+            document.getElementById('formContainer').style.display = 'block';
+            document.getElementById('invitationContainer').style.display = 'none';
+            document.getElementById('invitationForm').reset();
+        }
+
+        function playGreeting() {
+            const audio = document.getElementById('invitationAudio');
+            audio.play().catch(error => {
+                console.error('فشل تشغيل الصوت تلقائيًا:', error);
+            });
+        }
+    </script>
+</body>
+</html>
